@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulário de Suporte Sync</title>
+    <!-- Carrega o Tailwind CSS para estilização rápida e responsiva --><script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Define a fonte Inter como padrão */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
+
+    <!-- Card principal do formulário --><div class="bg-white p-6 sm:p-8 rounded-lg shadow-xl w-full max-w-lg">
+        
+        <header class="text-center mb-6">
+            <img src="http://suporte.synctecnologia.inf.br/scp/logo.php?1758560583" alt="Sync Tecnologia Logo" class="mx-auto h-16 mb-4 rounded-lg">
+            
+            <h1 class="text-2xl sm:text-3xl font-bold text-gray-800">
+                Solicitação de Suporte
+            </h1>
+        </header>
+
+        <!-- O formulário envolve todas as etapas --><form id="supportForm" onsubmit="event.preventDefault(); handleFormSubmit();">
+
+            <!-- ETAPA 1: Seleção do Tipo de Solicitação --><div id="step1">
+                <h2 class="text-xl font-semibold mb-4 text-gray-700">O que você precisa?</h2>
+                <p class="text-sm text-gray-600 mb-4">Selecione apenas uma opção.</p>
+                
+                <div class="space-y-3">
+                    <!-- Opções de Criação --><label class="flex items-center p-3 border rounded-lg hover:bg-gray-50 transition duration-200 cursor-pointer">
+                        <input type="radio" name="requestType" value="create_computer" class="mr-3 text-blue-600 focus:ring-blue-500" required>
+                        Criação de Usuário de Computador
+                    </label>
+                    <label class="flex items-center p-3 border rounded-lg hover:bg-gray-50 transition duration-200 cursor-pointer">
+                        <input type="radio" name="requestType" value="create_3cx" class="mr-3 text-blue-600 focus:ring-blue-500">
+                        Criar usuário no 3cx
+                    </label>
+                    <label class="flex items-center p-3 border rounded-lg hover:bg-gray-50 transition duration-200 cursor-pointer">
+                        <input type="radio" name="requestType" value="create_both" class="mr-3 text-blue-600 focus:ring-blue-500">
+                        Criar 3Cx e Computador
+                    </label>
+                    <!-- Opções de Reset --><label class="flex items-center p-3 border rounded-lg hover:bg-gray-50 transition duration-200 cursor-pointer">
+                        <input type="radio" name="requestType" value="reset_computer" class="mr-3 text-blue-600 focus:ring-blue-500">
+                        Resetar senha do usuário
+                    </label>
+                    <label class="flex items-center p-3 border rounded-lg hover:bg-gray-50 transition duration-200 cursor-pointer">
+                        <input type="radio" name="requestType" value="reset_3cx" class="mr-3 text-blue-600 focus:ring-blue-500">
+                        Resetar senha no 3cx
+                    </label>
+                    <!-- Opção de Excluir --><label class="flex items-center p-3 border rounded-lg hover:bg-gray-50 transition duration-200 cursor-pointer">
+                        <input type="radio" name="requestType" value="delete_users" class="mr-3 text-blue-600 focus:ring-blue-500">
+                        Excluir Usuários
+                    </label>
+                </div>
+                
+                <button type="button" onclick="goToStep2()" class="w-full bg-blue-600 text-white font-bold py-3 px-4 rounded-lg mt-6 hover:bg-blue-700 transition duration-300 shadow-md">
+                    Avançar
+                </button>
+            </div>
+
+            <!-- ETAPA 2 (CRIAÇÃO): Formulário de Dados para Criação (Inicialmente oculto) --><div id="step2-create" class="hidden">
+                <h2 class="text-xl font-semibold mb-4 text-gray-700">Dados para Criação</h2>
+                <p class="text-sm text-gray-600 mb-5">Campos com <span class="text-red-500">*</span> são obrigatórios.</p>
+                
+                <div class="space-y-4">
+                    <!-- Nome Completo --><div>
+                        <label for="fullName" class="block text-sm font-medium text-gray-700 mb-1">Nome Completo <span class="text-red-500">*</span></label>
+                        <input type="text" id="fullName" name="fullName" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    </div>
+                    <!-- Empresa --><div>
+                        <label for="company" class="block text-sm font-medium text-gray-700 mb-1">Empresa <span class="text-red-500">*</span></label>
+                        <input type="text" id="company" name="company" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    </div>
+                    <!-- Setor --><div>
+                        <label for="department" class="block text-sm font-medium text-gray-700 mb-1">Setor <span class="text-red-500">*</span></label>
+                        <input type="text" id="department" name="department" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    </div>
+                    <!-- E-mail (Lógica condicional de 'required' no JS) --><div>
+                        <label for="email" class="block text-sm font-medium text-gray-700 mb-1">
+                            E-mail <span id="email-asterisk" class="text-red-500 hidden">*</span>
+                        </label>
+                        <input type="email" id="email" name="email" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="exemplo@empresa.com">
+                    </div>
+                </div>
+                <!-- Botões --><button type="submit" class="w-full bg-green-600 text-white font-bold py-3 px-4 rounded-lg mt-6 hover:bg-green-700 transition duration-300 shadow-md">
+                    Gerar PDF
+                </button>
+                <button type="button" onclick="goBack('step1')" class="w-full text-center text-sm text-gray-600 mt-3 hover:underline">Voltar</button>
+            </div>
+
+            <!-- ETAPA 2 (RESET): Formulário de Dados para Reset (Inicialmente oculto) --><div id="step2-reset" class="hidden">
+                <h2 class="text-xl font-semibold mb-4 text-gray-700">Dados para Reset de Senha</h2>
+                <p class="text-sm text-gray-600 mb-5">Campos com <span class="text-red-500">*</span> são obrigatórios.</p>
+                
+                <div class="space-y-4">
+                    <!-- Empresa --><div>
+                        <label for="company_reset" class="block text-sm font-medium text-gray-700 mb-1">Empresa <span class="text-red-500">*</span></label>
+                        <input type="text" id="company_reset" name="company_reset" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    </div>
+                    <!-- Setor --><div>
+                        <label for="department_reset" class="block text-sm font-medium text-gray-700 mb-1">Setor <span class="text-red-500">*</span></label>
+                        <input type="text" id="department_reset" name="department_reset" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    </div>
+                    <!-- Usuário ou Ramal --><div>
+                        <label for="username" class="block text-sm font-medium text-gray-700 mb-1">Usuário ou Ramal <span class="text-red-500">*</span></label>
+                        <input type="text" id="username" name="username" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    </div>
+                </div>
+                
+                <!-- Botões --><button type="submit" class="w-full bg-green-600 text-white font-bold py-3 px-4 rounded-lg mt-6 hover:bg-green-700 transition duration-300 shadow-md">
+                    Gerar PDF
+                </button>
+                <button type="button" onclick="goBack('step1')" class="w-full text-center text-sm text-gray-600 mt-3 hover:underline">Voltar</button>
+            </div>
+
+            <!-- ETAPA 2 (EXCLUIR): Formulário de Dados para Exclusão (Inicialmente oculto) --><div id="step2-delete" class="hidden">
+                <h2 class="text-xl font-semibold mb-4 text-gray-700">Dados para Exclusão</h2>
+                <p class="text-sm text-gray-600 mb-5">Campos com <span class="text-red-500">*</span> são obrigatórios.</p>
+                
+                <div class="space-y-4">
+                    <!-- Empresa --><div>
+                        <label for="company_delete" class="block text-sm font-medium text-gray-700 mb-1">Empresa <span class="text-red-500">*</span></label>
+                        <input type="text" id="company_delete" name="company_delete" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    </div>
+                    
+                    <hr>
+
+                    <!-- Lista dinâmica de usuários para exclusão --><p class="text-sm font-medium text-gray-700">Usuários para excluir (Máx. 10)</p>
+                    <div id="delete-users-list" class="space-y-4">
+                        <!-- Usuário 1 (Nome e Setor) --><div class="p-3 border rounded-lg bg-gray-50">
+                            <h4 class="text-md font-semibold mb-2 text-gray-800">Usuário 1</h4>
+                            <div>
+                                <label for="user_delete_name_1" class="block text-sm font-medium text-gray-700 mb-1">Nome do Usuário <span class="text-red-500">*</span></label>
+                                <input type="text" id="user_delete_name_1" name="user_delete_name[]" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" required>
+                            </div>
+                            <div class="mt-3">
+                                <label for="user_delete_department_1" class="block text-sm font-medium text-gray-700 mb-1">Setor do Usuário <span class="text-red-500">*</span></label>
+                                <input type="text" id="user_delete_department_1" name="user_delete_department[]" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" required>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Botão para adicionar mais usuários --><button type="button" id="add-user-button" onclick="addDeleteUserField()" class="w-full bg-gray-200 text-gray-700 font-semibold py-2 px-4 rounded-lg mt-2 hover:bg-gray-300 transition duration-300 text-sm">
+                        + Adicionar outro usuário
+                    </button>
+                    <p id="delete-user-limit-msg" class="text-red-500 text-sm text-center mt-2 hidden">Limite de 10 usuários atingido.</p>
+
+                </div>
+                
+                <!-- Botões --><button type="submit" class="w-full bg-green-600 text-white font-bold py-3 px-4 rounded-lg mt-6 hover:bg-green-700 transition duration-300 shadow-md">
+                    Gerar PDF
+                </button>
+                <button type="button" onclick="goBack('step1')" class="w-full text-center text-sm text-gray-600 mt-3 hover:underline">Voltar</button>
+            </div>
+
+
+        </form>
+
+        <!-- ETAPA 3: Revisão e Instruções (O "PDF" - Inicialmente oculto) --><div id="step3-review" class="hidden">
+            <h2 class="text-2xl font-bold mb-4 text-center text-green-700">Solicitação Gerada!</h2>
+            <p class="text-center text-gray-600 mb-5">
+                <strong>Atenção:</strong> Tire um print (captura de tela) ou use a função "Imprimir" (Ctrl+P) para salvar como PDF e envie para o Suporte.
+            </p>
+            
+            <!-- Conteúdo da revisão será injetado aqui pelo JavaScript --><div id="reviewContent" class="p-4 border-2 border-dashed border-gray-300 rounded-lg bg-gray-50 space-y-2">
+                <!-- Conteúdo gerado via JS --></div>
+            
+            <button type="button" onclick="startOver()" class="w-full bg-blue-600 text-white font-bold py-3 px-4 rounded-lg mt-6 hover:bg-blue-700 transition duration-300 shadow-md">
+                Criar Nova Solicitação
+            </button>
+        </div>
+
+    </div>
+
+    <!-- Script para gerenciar a lógica das etapas --><script>
+        // Referências aos elementos das etapas
+        const step1 = document.getElementById('step1');
+        const step2Create = document.getElementById('step2-create');
+        const step2Reset = document.getElementById('step2-reset');
+        const step2Delete = document.getElementById('step2-delete');
+        const step3Review = document.getElementById('step3-review');
+        const supportForm = document.getElementById('supportForm');
+
+        // Referências aos inputs de CRIAÇÃO
+        const fullNameInput = document.getElementById('fullName');
+        const companyInput = document.getElementById('company');
+        const departmentInput = document.getElementById('department');
+        const emailInput = document.getElementById('email');
+        const emailAsterisk = document.getElementById('email-asterisk');
+        
+        // Referências aos inputs de RESET
+        const companyResetInput = document.getElementById('company_reset');
+        const departmentResetInput = document.getElementById('department_reset');
+        const usernameInput = document.getElementById('username');
+
+        // Referências aos inputs de EXCLUSÃO
+        const companyDeleteInput = document.getElementById('company_delete');
+        const deleteUsersList = document.getElementById('delete-users-list');
+        const addUserButton = document.getElementById('add-user-button');
+        const deleteUserLimitMsg = document.getElementById('delete-user-limit-msg');
+        let deleteUserCount = 1; // Contador para os campos dinâmicos
+
+
+        // Função para avançar da Etapa 1 para a Etapa 2
+        function goToStep2() {
+            const selected = document.querySelector('input[name="requestType"]:checked');
+            
+            if (!selected) { return; }
+            
+            const value = selected.value;
+            step1.classList.add('hidden');
+
+            // Esconde todos os formulários da etapa 2 antes de mostrar o correto
+            step2Create.classList.add('hidden');
+            step2Reset.classList.add('hidden');
+            step2Delete.classList.add('hidden');
+
+            // Reseta todos os 'required' para 'false' antes de definir os corretos
+            fullNameInput.required = false;
+            companyInput.required = false;
+            departmentInput.required = false;
+            emailInput.required = false;
+            companyResetInput.required = false;
+            departmentResetInput.required = false;
+            usernameInput.required = false;
+            companyDeleteInput.required = false;
+            
+            // Garante que o primeiro campo de exclusão não seja obrigatório se não for a opção 'delete'
+            document.getElementById('user_delete_name_1').required = false;
+            document.getElementById('user_delete_department_1').required = false;
+
+
+            if (value.startsWith('create_')) {
+                // Mostra o formulário de CRIAÇÃO
+                step2Create.classList.remove('hidden');
+                
+                // Define campos de CRIAÇÃO como obrigatórios
+                fullNameInput.required = true;
+                companyInput.required = true;
+                departmentInput.required = true;
+                
+                // Lógica condicional do E-mail
+                if (value === 'create_3cx' || value === 'create_both') {
+                    emailInput.required = true;
+                    emailAsterisk.classList.remove('hidden');
+                } else {
+                    emailInput.required = false;
+                    emailAsterisk.classList.add('hidden');
+                }
+
+            } else if (value.startsWith('reset_')) {
+                // Mostra o formulário de RESET
+                step2Reset.classList.remove('hidden');
+                
+                // Define campos de RESET como obrigatórios
+                usernameInput.required = true;
+                companyResetInput.required = true;
+                departmentResetInput.required = true;
+                
+            } else if (value === 'delete_users') {
+                // Mostra o formulário de EXCLUSÃO
+                step2Delete.classList.remove('hidden');
+
+                // Define campos de EXCLUSÃO como obrigatórios
+                companyDeleteInput.required = true;
+                document.getElementById('user_delete_name_1').required = true;
+                document.getElementById('user_delete_department_1').required = true;
+            }
+        }
+
+        // Função para adicionar campos de usuário para exclusão
+        function addDeleteUserField() {
+            if (deleteUserCount >= 10) {
+                addUserButton.disabled = true;
+                deleteUserLimitMsg.classList.remove('hidden');
+                return;
+            }
+
+            deleteUserCount++;
+
+            // Cria o novo container div para o usuário
+            const newFieldGroup = document.createElement('div');
+            newFieldGroup.className = 'p-3 border rounded-lg bg-gray-50';
+            newFieldGroup.innerHTML = `
+                <h4 class="text-md font-semibold mb-2 text-gray-800">Usuário ${deleteUserCount}</h4>
+                <div>
+                    <label for="user_delete_name_${deleteUserCount}" class="block text-sm font-medium text-gray-700 mb-1">Nome do Usuário <span class="text-red-500">*</span></label>
+                    <input type="text" id="user_delete_name_${deleteUserCount}" name="user_delete_name[]" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" required>
+                </div>
+                <div class="mt-3">
+                    <label for="user_delete_department_${deleteUserCount}" class="block text-sm font-medium text-gray-700 mb-1">Setor do Usuário <span class="text-red-500">*</span></label>
+                    <input type="text" id="user_delete_department_${deleteUserCount}" name="user_delete_department[]" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" required>
+                </div>
+            `;
+            
+            // Adiciona o novo grupo ao container da lista
+            deleteUsersList.appendChild(newFieldGroup);
+
+            // Checa o limite novamente após adicionar
+            if (deleteUserCount >= 10) {
+                addUserButton.disabled = true;
+                deleteUserLimitMsg.classList.remove('hidden');
+            }
+        }
+
+
+        // Função chamada ao clicar em "Gerar PDF"
+        function handleFormSubmit() {
+            const formData = new FormData(supportForm);
+            const reviewContent = document.getElementById('reviewContent');
+            
+            const selectedRadio = document.querySelector('input[name="requestType"]:checked');
+            const requestText = selectedRadio ? selectedRadio.parentElement.innerText.trim() : 'N/A';
+            const requestType = selectedRadio ? selectedRadio.value : '';
+
+            let html = `<h3 class="text-lg font-semibold mb-3 border-b pb-2">Resumo da Solicitação</h3>`;
+            html += `<p class="py-1"><strong>Tipo de Solicitação:</strong> ${requestText}</p>`;
+
+            // Adiciona os dados baseado no tipo de formulário preenchido
+            if (requestType.startsWith('create_')) {
+                html += `<p class="py-1"><strong>Nome Completo:</strong> ${formData.get('fullName')}</p>`;
+                html += `<p class="py-1"><strong>Empresa:</strong> ${formData.get('company')}</p>`;
+                html += `<p class="py-1"><strong>Setor:</strong> ${formData.get('department')}</p>`;
+                html += `<p class="py-1"><strong>E-mail:</strong> ${formData.get('email') || 'Não informado'}</p>`;
+
+            } else if (requestType.startsWith('reset_')) {
+                html += `<p class="py-1"><strong>Empresa:</strong> ${formData.get('company_reset')}</p>`;
+                html += `<p class="py-1"><strong>Setor:</strong> ${formData.get('department_reset')}</p>`;
+                html += `<p class="py-1"><strong>Usuário ou Ramal:</strong> ${formData.get('username')}</p>`;
+            
+            } else if (requestType === 'delete_users') {
+                html += `<p class="py-1"><strong>Empresa:</strong> ${formData.get('company_delete')}</p>`;
+                
+                const usersToDeleteNames = formData.getAll('user_delete_name[]');
+                const usersToDeleteDepartments = formData.getAll('user_delete_department[]');
+
+                if (usersToDeleteNames && usersToDeleteNames.length > 0) {
+                    html += '<p class="py-1"><strong>Usuários a Excluir:</strong></p>';
+                    html += '<ul class="list-disc list-inside ml-4">';
+                    for (let i = 0; i < usersToDeleteNames.length; i++) {
+                        const name = usersToDeleteNames[i].trim();
+                        const department = usersToDeleteDepartments[i].trim();
+                        if (name !== '' && department !== '') {
+                            html += `<li class-><strong>Nome:</strong> ${name}, <strong>Setor:</strong> ${department}</li>`;
+                        }
+                    }
+                    html += '</ul>';
+                }
+            }
+
+            // Injeta o HTML no container de revisão
+            reviewContent.innerHTML = html;
+
+            // Esconde os formulários e mostra a página de revisão
+            supportForm.classList.add('hidden'); 
+            step3Review.classList.remove('hidden');
+            window.scrollTo(0, 0);
+        }
+
+        // Função para voltar para uma etapa anterior
+        function goBack(stepId) {
+            step2Create.classList.add('hidden');
+            step2Reset.classList.add('hidden');
+            step2Delete.classList.add('hidden');
+            step3Review.classList.add('hidden');
+            
+            document.getElementById(stepId).classList.remove('hidden');
+        }
+
+        // Função para reiniciar o processo
+        function startOver() {
+            supportForm.reset(); 
+            emailInput.required = false;
+            emailAsterisk.classList.add('hidden');
+            
+            // Resetar o formulário de exclusão
+            deleteUserCount = 1;
+            addUserButton.disabled = false;
+            deleteUserLimitMsg.classList.add('hidden');
+            
+            // Remove campos dinâmicos (todos exceto o primeiro)
+            const allFields = deleteUsersList.querySelectorAll('div.p-3'); // Seleciona apenas os grupos de campos
+            allFields.forEach((field, index) => {
+                // O primeiro 'div' (index 0) é o campo estático (Usuário 1)
+                if (index > 0) { 
+                    field.remove();
+                }
+            });
+            // Garante que o primeiro campo estático seja 'required' novamente
+            document.getElementById('user_delete_name_1').required = true;
+            document.getElementById('user_delete_department_1').required = true;
+
+
+            supportForm.classList.remove('hidden'); 
+            goBack('step1');
+        }
+    </script>
+
+</body>
+</html>
